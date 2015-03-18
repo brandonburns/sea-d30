@@ -7,7 +7,7 @@ module.exports = function(app, appSecret) {
   app.use(bodyparser.json());
 
   app.get('/notes', eat_auth(appSecret), function(req, res) {
-    Note.find({user_id: req.user._id}, function(err, data) {
+    Note.find({}, function(err, data) {
       if (err) return res.status(500).send({'msg': 'could not retrieve notes'});
 
       res.json(data);

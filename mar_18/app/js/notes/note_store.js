@@ -3,6 +3,8 @@
 var Fluxxor = require('fluxxor');
 var baseUrl = 'api/v1/notes';
 var constants = require('../constants');
+var request = require('superagent');
+var Cookies = require('cookies-js');
 
 var NoteStore = Fluxxor.createStore({
   initialize: function() {
@@ -10,11 +12,16 @@ var NoteStore = Fluxxor.createStore({
 
     this.bindActions(
       constants.ADD_NOTE, this.onNewNote,
-      constants.REMOVE_NOTE, this.onRemoveNote
+      constants.REMOVE_NOTE, this.onRemoveNote,
+      constants.GET_ALL_NOTES, this.getAll
     );
+    this.getAll();
+  },
 
-    request
+  getAll: function() {
+   request
       .get(baseUrl)
+      .set('eat', Cookies.get('eat'))
       .end(function(err, res) {
         if (err) return console.log(err);
 
@@ -26,6 +33,7 @@ var NoteStore = Fluxxor.createStore({
   onNewNote: function(note) {
     request
       .post(baseUrl)
+      .set('eat', Cookies.get('eat'))
       .send(note)
       .end(function(err, res) {
         if (err) return console.log(err);
@@ -38,6 +46,7 @@ var NoteStore = Fluxxor.createStore({
   onRemoveNote: function(note) {
     request
       .del(baseUrl + '/' + note._id)
+      .set('eat', Cookies.get('eat'))
       .end(function(err, res) {
         if (err) return console.log(err);
 
